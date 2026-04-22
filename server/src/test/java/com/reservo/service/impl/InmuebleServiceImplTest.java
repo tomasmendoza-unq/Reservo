@@ -13,6 +13,7 @@ import com.reservo.modelo.reserva.Peticion;
 import com.reservo.modelo.user.Usuario;
 import com.reservo.service.InmuebleService;
 import com.reservo.service.PeticionService;
+import com.reservo.service.ResetService;
 import com.reservo.service.UsuarioService;
 import com.reservo.service.exception.EmailRepetido;
 import com.reservo.service.exception.InmuebleRepetidoException;
@@ -54,6 +55,9 @@ public class InmuebleServiceImplTest {
     @Autowired
     private PeticionService peticionService;
 
+    @Autowired
+    private ResetService resetService;
+
 
     private Usuario jorge;
     private Usuario juan;
@@ -64,6 +68,11 @@ public class InmuebleServiceImplTest {
     private MockMultipartFile mockImage;
     private InmuebleRemoveImagesDTO removeImagesDTO;
     Peticion peticionDeJuanito;
+
+    @AfterEach
+    void tearDown() {
+        resetService.resetAll();
+    }
 
     @BeforeEach
     public void setUp() throws EmailRepetido {

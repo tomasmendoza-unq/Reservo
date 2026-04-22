@@ -1,11 +1,13 @@
 package com.reservo.configuration;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import com.reservo.service.ResetService;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -17,6 +19,14 @@ class CorsConfigurationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ResetService resetService;
+
+    @AfterEach
+    void tearDown() {
+        resetService.resetAll();
+    }
 
     @Test
     void shouldAllowCorsFromLocalhost() throws Exception {
