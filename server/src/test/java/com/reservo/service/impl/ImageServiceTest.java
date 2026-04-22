@@ -2,6 +2,7 @@ package com.reservo.service.impl;
 
 import com.reservo.modelo.property.ReservoImage;
 import com.reservo.service.ImageService;
+import com.reservo.service.ResetService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,14 @@ class ImageServiceTest {
 
     @Autowired
     private ImageService imageService;
+
+    @Autowired
+    private ResetService resetService;
+
+    @AfterEach
+    void tearDown() {
+        resetService.resetAll();
+    }
 
     @Test
     void shouldSaveAndDeleteImageSuccessfully() throws Exception {

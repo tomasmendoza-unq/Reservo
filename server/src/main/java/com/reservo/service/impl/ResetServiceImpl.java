@@ -1,0 +1,113 @@
+package com.reservo.service.impl;
+
+import com.reservo.modelo.property.ReservoImage;
+import com.reservo.service.ImageService;
+import com.reservo.service.ResetService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.metamodel.EntityType;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+@Service
+@Transactional
+public class ResetServiceImpl implements ResetService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private final ImageService imageService;
+
+    public ResetServiceImpl(ImageService imageService) {
+        this.imageService = imageService;
+    }
+
+    @Override
+    public void resetAll() {
+        deleteCloudinaryImages();
+        resetSQL();
+    }
+
+    private void deleteCloudinaryImages() {
+        try {
+            String query = "SELECT ri FROM ReservoImage ri";
+            @SuppressWarnings("unchecked")
+            List<ReservoImage> images = entityManager.createQuery(query, ReservoImage.class).getResultList();
+
+            for (ReservoImage image : images) {
+                if (image.getPublicId() != null && !image.getPublicId().isEmpty()) {
+                    imageService.deleteImage(image.getPublicId());
+                }
+            }
+        } catch (Exception e) {
+            // Si hay error al eliminar de Cloudinary, continuar con el reset de BD
+            System.err.println("Error al eliminar imagenes de Cloudinary: " + e.getMessage());
+        }
+    }
+
+    private void resetSQL() {
+        Set<String> tablasExistentes = obtenerTablasExistentes();
+
+        if (tablasExistentes.isEmpty()) {
+            return;
+        }
+
+        // Deshabilitar foreign keys temporalmente para limpiar
+        entityManager.createNativeQuery("SET session_replication_role = 'replica'").executeUpdate();
+
+        for (String tableName : tablasExistentes) {
+            limpiarTabla(tableName);
+        }
+
+        // Reabilitar foreign keys
+        entityManager.createNativeQuery("SET session_replication_role = 'origin'").executeUpdate();
+    }
+
+    private Set<String> obtenerTablasExistentes() {
+        Set<String> tablas = new HashSet<>();
+
+        try {
+            String query = """
+                    SELECT table_name 
+                    FROM information_schema.tables 
+                    WHERE table_schema = 'public' 
+                    AND table_type = 'BASE TABLE'
+                    """;
+
+            @SuppressWarnings("unchecked")
+            List<String> resultados = entityManager.createNativeQuery(query).getResultList();
+            tablas.addAll(resultados);
+
+        } catch (Exception e) {
+            Set<EntityType<?>> entityTypes = entityManager.getMetamodel().getEntities();
+            for (EntityType<?> entityType : entityTypes) {
+                tablas.add(getTableName(entityType));
+            }
+        }
+
+        return tablas;
+    }
+
+    private void limpiarTabla(String tableName) {
+        try {
+            entityManager.createNativeQuery("TRUNCATE TABLE " + tableName + " CASCADE")
+                    .executeUpdate();
+        } catch (Exception e) {
+            entityManager.createNativeQuery("DELETE FROM " + tableName)
+                    .executeUpdate();
+        }
+    }
+
+    private String getTableName(EntityType<?> entityType) {
+        Class<?> entityClass = entityType.getJavaType();
+        jakarta.persistence.Table tableAnnotation = entityClass.getAnnotation(jakarta.persistence.Table.class);
+        if (tableAnnotation != null && !tableAnnotation.name().isEmpty()) {
+            return tableAnnotation.name();
+        }
+        return entityClass.getSimpleName().toLowerCase();
+    }
+}

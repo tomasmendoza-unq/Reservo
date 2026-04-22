@@ -36,7 +36,7 @@ public class PeticionControllerREST {
     }
 
     @PostMapping("/enviar")
-    public ResponseEntity<PeticionResponseDTO> createPeticion(@RequestBody PeticionRequestDTO peticionDTO) throws ParametroIncorrecto {//TODO cambiar error, solo es temporal
+    public ResponseEntity<PeticionResponseDTO> createPeticion(@RequestBody PeticionRequestDTO peticionDTO) throws ParametroIncorrecto {
 
         Usuario user = usuarioService.findById(peticionDTO.userId())
                 .orElseThrow(() -> new ParametroIncorrecto("Usuario no encontrado"));

@@ -71,7 +71,6 @@ public class PeticionServiceImpl implements PeticionService {
         return peticionDAO.findByUsuarioAndInmueble(peticion.getCliente(), peticion.getInmueble(), peticion.getFechaDelEvento()).isPresent();
     }
 
-    //BORRAR SI SE AGREGAN RESERVA DE DOS DIAS
     private void verificarSiOrdenDeHorarioDeLaPeticion(Peticion peticion) {
         if (!timeManager.estanOrdenadosLosHorarios(peticion)) throw new HorarioDesordenado();
     }
