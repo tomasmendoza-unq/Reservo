@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/property")
 public final class InmuebleControllerREST {
     private final InmuebleService inmuebleService;

@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/auth")
 public final class UsuarioControllerREST {
     private final UsuarioService usuarioService;
