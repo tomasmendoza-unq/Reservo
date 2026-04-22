@@ -1,7 +1,9 @@
 package com.reservo.service.exception;
 
-public class NoExisteInmuebleExpcetion extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class NoExisteInmuebleExpcetion extends BusinessException {
     public NoExisteInmuebleExpcetion(String message) {
-        super(message);
+        super(HttpStatus.NOT_FOUND, "PROPERTY_NOT_FOUND", message);
     }
 }

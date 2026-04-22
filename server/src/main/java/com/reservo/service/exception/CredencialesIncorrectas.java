@@ -1,7 +1,9 @@
 package com.reservo.service.exception;
 
-public class CredencialesIncorrectas extends Throwable {
-    public CredencialesIncorrectas(String s) {
-        super(s);
+import org.springframework.http.HttpStatus;
+
+public class CredencialesIncorrectas extends BusinessException {
+    public CredencialesIncorrectas(String message) {
+        super(HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", message);
     }
 }

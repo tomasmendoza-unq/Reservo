@@ -1,7 +1,10 @@
 package com.reservo.service.exception.peticion;
 
-public class HorarioOcupado extends RuntimeException {
-    public HorarioOcupado(String s) {
-        super(s);
+import com.reservo.service.exception.BusinessException;
+import org.springframework.http.HttpStatus;
+
+public class HorarioOcupado extends BusinessException {
+    public HorarioOcupado(String message) {
+        super(HttpStatus.CONFLICT, "SCHEDULE_OCCUPIED", message);
     }
 }

@@ -1,7 +1,9 @@
 package com.reservo.service.exception;
 
-public class TienePeticionVigenteException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class TienePeticionVigenteException extends BusinessException {
     public TienePeticionVigenteException(String message) {
-        super(message);
+        super(HttpStatus.CONFLICT, "HAS_ACTIVE_PETITION", message);
     }
 }
