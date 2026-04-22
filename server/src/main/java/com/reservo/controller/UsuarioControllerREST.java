@@ -1,7 +1,7 @@
 package com.reservo.controller;
 
 import com.reservo.controller.dto.Usuario.*;
-import com.reservo.controller.exception.DTOResponseError;
+import com.reservo.controller.exception.ResponseErrorDTO;
 import com.reservo.controller.exception.ParametroIncorrecto;
 import com.reservo.modelo.user.Credentials;
 import com.reservo.modelo.user.Usuario;
@@ -57,7 +57,7 @@ public final class UsuarioControllerREST {
     }
 
     @PutMapping("/modifyUserName/{id}")
-    public ResponseEntity<DTOResponseError> modifyUserName(@PathVariable Long id,
+    public ResponseEntity<ResponseErrorDTO> modifyUserName(@PathVariable Long id,
                                                            @RequestBody CampoActualizadoDTO valorDTO) {
         Optional<Usuario> optUsuario = usuarioService.findById(id);
         if (optUsuario.isEmpty()) throw new UsuarioNoExiste("No existe el usuario que quiere modificar.");
@@ -73,7 +73,7 @@ public final class UsuarioControllerREST {
     }
 
     @PutMapping("/modifyUserEmail/{id}")
-    public ResponseEntity<DTOResponseError> modifyUserEmail(@PathVariable Long id,
+    public ResponseEntity<ResponseErrorDTO> modifyUserEmail(@PathVariable Long id,
                                                             @RequestBody CampoActualizadoDTO valorDTO) throws EmailRepetido {
         Optional<Usuario> optUsuario = usuarioService.findById(id);
         if (optUsuario.isEmpty()) throw new UsuarioNoExiste("No existe el usuario que quiere modificar.");
@@ -92,7 +92,7 @@ public final class UsuarioControllerREST {
     }
 
     @PutMapping("/modifyUserPassword/{id}")
-    public ResponseEntity<DTOResponseError> modifyUserPassword(@PathVariable Long id,
+    public ResponseEntity<ResponseErrorDTO> modifyUserPassword(@PathVariable Long id,
                                                                @RequestBody CampoActualizadoDTO valorDTO) {
         Optional<Usuario> optUsuario = usuarioService.findById(id);
         if (optUsuario.isEmpty()) throw new UsuarioNoExiste("No existe el usuario que quiere modificar.");
@@ -108,7 +108,7 @@ public final class UsuarioControllerREST {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<DTOResponseError> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<ResponseErrorDTO> deleteUser(@PathVariable Long id) {
         usuarioService.delete(id);
         return ResponseEntity.ok().build();
     }

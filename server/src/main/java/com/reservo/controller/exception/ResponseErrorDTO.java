@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
 @Schema(description = "Error response wrapper")
-public record DTOResponseError(
+public record ResponseErrorDTO(
     @Schema(description = "Timestamp of the error", example = "2026-04-22T14:30:00")
     LocalDateTime timestamp,
     
@@ -20,7 +20,7 @@ public record DTOResponseError(
     @Schema(description = "Request path", example = "/api/usuarios/register")
     String path
 ) {
-    public static DTOResponseError of(int status, String error, String message, String path) {
-        return new DTOResponseError(LocalDateTime.now(), status, error, message, path);
+    public static ResponseErrorDTO of(int status, String error, String message, String path) {
+        return new ResponseErrorDTO(LocalDateTime.now(), status, error, message, path);
     }
 }

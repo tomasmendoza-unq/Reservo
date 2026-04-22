@@ -1,7 +1,7 @@
 package com.reservo.controller;
 
 import com.reservo.controller.dto.Inmueble.*;
-import com.reservo.controller.exception.DTOResponseError;
+import com.reservo.controller.exception.ResponseErrorDTO;
 import com.reservo.controller.exception.ParametroIncorrecto;
 import com.reservo.modelo.property.Inmueble;
 import com.reservo.modelo.property.ReservoImage;
@@ -55,19 +55,19 @@ public final class InmuebleControllerREST {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DTOResponseError> modifyInmueble(@PathVariable Long id, @RequestBody InmuebleModifyRequestDTO inmuebleDTO) throws ParametroIncorrecto {
+    public ResponseEntity<ResponseErrorDTO> modifyInmueble(@PathVariable Long id, @RequestBody InmuebleModifyRequestDTO inmuebleDTO) throws ParametroIncorrecto {
         this.inmuebleService.update(id, inmuebleDTO);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PatchMapping("/{id}/addImages")
-    public ResponseEntity<DTOResponseError> addImages(@PathVariable Long id, @RequestPart("images") List<MultipartFile> imagesToAdd) throws ParametroIncorrecto {
+    public ResponseEntity<ResponseErrorDTO> addImages(@PathVariable Long id, @RequestPart("images") List<MultipartFile> imagesToAdd) throws ParametroIncorrecto {
         this.inmuebleService.addImages(id, imagesToAdd);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PatchMapping("/{id}/removeImages")
-    public ResponseEntity<DTOResponseError> removeImages(@PathVariable Long id, @RequestBody InmuebleRemoveImagesDTO inmuebleRemoveImagesDTO) throws ParametroIncorrecto {
+    public ResponseEntity<ResponseErrorDTO> removeImages(@PathVariable Long id, @RequestBody InmuebleRemoveImagesDTO inmuebleRemoveImagesDTO) throws ParametroIncorrecto {
         this.inmuebleService.removeImages(id, inmuebleRemoveImagesDTO);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -118,7 +118,7 @@ public final class InmuebleControllerREST {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<DTOResponseError> deleteInmueble(@PathVariable Long id) {
+    public ResponseEntity<ResponseErrorDTO> deleteInmueble(@PathVariable Long id) {
         this.inmuebleService.delete(id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }

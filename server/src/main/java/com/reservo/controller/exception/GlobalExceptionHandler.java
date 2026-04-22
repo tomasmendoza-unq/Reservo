@@ -18,12 +18,12 @@ public class GlobalExceptionHandler {
      * Maneja todas las excepciones de regla de negocio (BusinessException)
      */
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<DTOResponseError> handleBusinessException(
+    public ResponseEntity<ResponseErrorDTO> handleBusinessException(
         BusinessException ex, HttpServletRequest request) {
         log.warn("Business error [{}]: {}", ex.getErrorCode(), ex.getMessage());
         return ResponseEntity
             .status(ex.getHttpStatus())
-            .body(DTOResponseError.of(
+            .body(ResponseErrorDTO.of(
                 ex.getHttpStatus().value(),
                 ex.getErrorCode(),
                 ex.getMessage(),
@@ -35,7 +35,7 @@ public class GlobalExceptionHandler {
      * Maneja excepciones de validación de Bean Validation
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<DTOResponseError> handleValidationExceptions(
+    public ResponseEntity<ResponseErrorDTO> handleValidationExceptions(
         MethodArgumentNotValidException ex, HttpServletRequest request) {
         String message = ex.getBindingResult().getFieldError() != null
             ? ex.getBindingResult().getFieldError().getDefaultMessage()
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
         log.warn("Validation error: {}", message);
         return ResponseEntity
             .badRequest()
-            .body(DTOResponseError.of(
+            .body(ResponseErrorDTO.of(
                 HttpStatus.BAD_REQUEST.value(),
                 "VALIDATION_ERROR",
                 message,
@@ -55,12 +55,12 @@ public class GlobalExceptionHandler {
      * Maneja excepciones de violación de constraints
      */
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<DTOResponseError> handleConstraintViolationException(
+    public ResponseEntity<ResponseErrorDTO> handleConstraintViolationException(
         ConstraintViolationException ex, HttpServletRequest request) {
         log.warn("Constraint violation: {}", ex.getMessage());
         return ResponseEntity
             .badRequest()
-            .body(DTOResponseError.of(
+            .body(ResponseErrorDTO.of(
                 HttpStatus.BAD_REQUEST.value(),
                 "CONSTRAINT_VIOLATION",
                 ex.getMessage(),
@@ -72,12 +72,12 @@ public class GlobalExceptionHandler {
      * Maneja todas las excepciones no capturadas
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<DTOResponseError> handleGenericException(
+    public ResponseEntity<ResponseErrorDTO> handleGenericException(
         Exception ex, HttpServletRequest request) {
         log.error("Unexpected error", ex);
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(DTOResponseError.of(
+            .body(ResponseErrorDTO.of(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "INTERNAL_SERVER_ERROR",
                 "An unexpected error occurred",
