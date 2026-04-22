@@ -1,7 +1,14 @@
 package com.reservo.service.exception.peticion;
 
-public class EsDueñoDeLaPropiedadSolicitada extends RuntimeException{
+import com.reservo.service.exception.BusinessException;
+import org.springframework.http.HttpStatus;
+
+public class EsDueñoDeLaPropiedadSolicitada extends BusinessException {
     public EsDueñoDeLaPropiedadSolicitada() {
-        super("No puede solicitar su propia vivienda");
+        super(HttpStatus.FORBIDDEN, "CANNOT_REQUEST_OWN_PROPERTY", "No puede solicitar su propia vivienda");
+    }
+
+    public EsDueñoDeLaPropiedadSolicitada(String message) {
+        super(HttpStatus.FORBIDDEN, "CANNOT_REQUEST_OWN_PROPERTY", message);
     }
 }

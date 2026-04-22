@@ -1,7 +1,9 @@
 package com.reservo.service.exception;
 
-public class EmailRepetido extends Throwable {
-    public EmailRepetido(String s) {
-        super(s);
+import org.springframework.http.HttpStatus;
+
+public class EmailRepetido extends BusinessException {
+    public EmailRepetido(String message) {
+        super(HttpStatus.BAD_REQUEST, "DUPLICATE_EMAIL", message);
     }
 }

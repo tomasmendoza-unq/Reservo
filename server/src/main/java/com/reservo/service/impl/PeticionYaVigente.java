@@ -1,7 +1,10 @@
 package com.reservo.service.impl;
 
-public class PeticionYaVigente extends RuntimeException {
-    public PeticionYaVigente(String s) {
-        super(s);
+import com.reservo.service.exception.BusinessException;
+import org.springframework.http.HttpStatus;
+
+public class PeticionYaVigente extends BusinessException {
+    public PeticionYaVigente(String message) {
+        super(HttpStatus.CONFLICT, "PETITION_ALREADY_ACTIVE", message);
     }
 }

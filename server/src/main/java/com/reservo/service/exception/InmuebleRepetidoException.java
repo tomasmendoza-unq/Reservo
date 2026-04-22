@@ -1,7 +1,9 @@
 package com.reservo.service.exception;
 
-public class InmuebleRepetidoException extends RuntimeException {
+import org.springframework.http.HttpStatus;
+
+public class InmuebleRepetidoException extends BusinessException {
     public InmuebleRepetidoException(String message) {
-        super(message);
+        super(HttpStatus.CONFLICT, "DUPLICATE_PROPERTY", message);
     }
 }

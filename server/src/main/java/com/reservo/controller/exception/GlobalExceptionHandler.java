@@ -1,96 +1,87 @@
 package com.reservo.controller.exception;
 
-import com.reservo.service.exception.CredencialesIncorrectas;
-import com.reservo.service.exception.EmailRepetido;
-import com.reservo.service.exception.NoExisteInmuebleExpcetion;
-import com.reservo.service.exception.TienePeticionVigenteException;
-import com.reservo.service.exception.peticion.EsDueñoDeLaPropiedadSolicitada;
-import com.reservo.service.exception.peticion.RealizoUnaPeticionSobreElInmuebleEnElMismoDia;
-import com.reservo.service.exception.user.UsuarioNoExiste;
-import com.reservo.service.exception.user.UsuarioNoPuedeSerEliminado;
-import com.reservo.service.exception.peticion.HorarioOcupado;
-import com.reservo.service.exception.peticion.PeticionVencida;
-import com.reservo.service.impl.PeticionYaVigente;
+import com.reservo.service.exception.BusinessException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(ParametroIncorrecto.class)
-    public DTOResponseError badParameterHandler(ParametroIncorrecto ex) {
-        return new DTOResponseError(ex.getMessage());
+    /**
+     * Maneja todas las excepciones de regla de negocio (BusinessException)
+     */
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ResponseErrorDTO> handleBusinessException(
+        BusinessException ex, HttpServletRequest request) {
+        log.warn("Business error [{}]: {}", ex.getErrorCode(), ex.getMessage());
+        return ResponseEntity
+            .status(ex.getHttpStatus())
+            .body(ResponseErrorDTO.of(
+                ex.getHttpStatus().value(),
+                ex.getErrorCode(),
+                ex.getMessage(),
+                request.getRequestURI()
+            ));
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(EmailRepetido.class)
-    public ResponseEntity<DTOResponseError> repeatedEmail(EmailRepetido ex) {
-        return new ResponseEntity<>(new DTOResponseError(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    /**
+     * Maneja excepciones de validación de Bean Validation
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ResponseErrorDTO> handleValidationExceptions(
+        MethodArgumentNotValidException ex, HttpServletRequest request) {
+        String message = ex.getBindingResult().getFieldError() != null
+            ? ex.getBindingResult().getFieldError().getDefaultMessage()
+            : "Validation failed";
+        log.warn("Validation error: {}", message);
+        return ResponseEntity
+            .badRequest()
+            .body(ResponseErrorDTO.of(
+                HttpStatus.BAD_REQUEST.value(),
+                "VALIDATION_ERROR",
+                message,
+                request.getRequestURI()
+            ));
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(CredencialesIncorrectas.class)
-    public ResponseEntity<DTOResponseError> wrongCredentials(CredencialesIncorrectas ex) {
-        return new ResponseEntity<>(new DTOResponseError(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    /**
+     * Maneja excepciones de violación de constraints
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ResponseErrorDTO> handleConstraintViolationException(
+        ConstraintViolationException ex, HttpServletRequest request) {
+        log.warn("Constraint violation: {}", ex.getMessage());
+        return ResponseEntity
+            .badRequest()
+            .body(ResponseErrorDTO.of(
+                HttpStatus.BAD_REQUEST.value(),
+                "CONSTRAINT_VIOLATION",
+                ex.getMessage(),
+                request.getRequestURI()
+            ));
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(PeticionVencida.class)
-    public ResponseEntity<DTOResponseError> deprecatedPetition(PeticionVencida ex) {
-        return new ResponseEntity<>(new DTOResponseError(ex.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(HorarioOcupado.class)
-    public ResponseEntity<DTOResponseError> horarioOcupado(HorarioOcupado ex) {
-        return new ResponseEntity<>(new DTOResponseError(ex.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(PeticionYaVigente.class)
-    public ResponseEntity<DTOResponseError> peticionYaVigente(PeticionYaVigente ex) {
-        return new ResponseEntity<>(new DTOResponseError(ex.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(TienePeticionVigenteException.class)
-    public ResponseEntity<DTOResponseError> tienePeticionVigente(TienePeticionVigenteException ex) {
-        return new ResponseEntity<>(new DTOResponseError(ex.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(NoExisteInmuebleExpcetion.class)
-    public ResponseEntity<DTOResponseError> noExisteInmueble(NoExisteInmuebleExpcetion ex) {
-        return new ResponseEntity<>(new DTOResponseError(ex.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UsuarioNoPuedeSerEliminado.class)
-    public ResponseEntity<DTOResponseError> usuarioNoPuedeSerEliminado(UsuarioNoPuedeSerEliminado ex) {
-        return new ResponseEntity<>(new DTOResponseError(ex.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UsuarioNoExiste.class)
-    public ResponseEntity<DTOResponseError> usuarioNoExiste(UsuarioNoExiste ex) {
-        return new ResponseEntity<>(new DTOResponseError(ex.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(EsDueñoDeLaPropiedadSolicitada.class)
-    public ResponseEntity<DTOResponseError> esDueñoDeLaPropiedad(EsDueñoDeLaPropiedadSolicitada ex) {
-        return new ResponseEntity<>(new DTOResponseError(ex.getMessage()), HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(RealizoUnaPeticionSobreElInmuebleEnElMismoDia.class)
-    public ResponseEntity<DTOResponseError> esDueñoDeLaPropiedad(RealizoUnaPeticionSobreElInmuebleEnElMismoDia ex) {
-        return new ResponseEntity<>(new DTOResponseError(ex.getMessage()), HttpStatus.BAD_REQUEST);
+    /**
+     * Maneja todas las excepciones no capturadas
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ResponseErrorDTO> handleGenericException(
+        Exception ex, HttpServletRequest request) {
+        log.error("Unexpected error", ex);
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(ResponseErrorDTO.of(
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "INTERNAL_SERVER_ERROR",
+                "An unexpected error occurred",
+                request.getRequestURI()
+            ));
     }
 }

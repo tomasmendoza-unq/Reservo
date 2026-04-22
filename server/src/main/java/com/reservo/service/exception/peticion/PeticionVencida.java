@@ -1,7 +1,10 @@
 package com.reservo.service.exception.peticion;
 
-public class PeticionVencida extends RuntimeException {
-    public PeticionVencida(String msg) {
-        super(msg);
+import com.reservo.service.exception.BusinessException;
+import org.springframework.http.HttpStatus;
+
+public class PeticionVencida extends BusinessException {
+    public PeticionVencida(String message) {
+        super(HttpStatus.GONE, "EXPIRED_PETITION", message);
     }
 }
