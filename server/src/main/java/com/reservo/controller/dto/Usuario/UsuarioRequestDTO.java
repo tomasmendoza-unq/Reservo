@@ -9,14 +9,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public record UsuarioRequestDTO(
-        @NotNull(message = "El nombre debe no estar en blanco") // TODO no anda
+        @NotNull(message = "El nombre debe no estar en blanco")
         @NotBlank(message = "El nombre debe no estar en blanco")
         String name,
         @NotNull(message = "La contraseña debe no estar en blanco")
         @NotBlank(message = "La contraseña debe no estar en blanco")
         String password,
-//        @NotNull(message = "La contraseña debe no estar en blanco")
-//        @NotBlank(message = "La contraseña debe no estar en blanco")
         String email
 ) {
 

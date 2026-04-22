@@ -27,7 +27,6 @@ public class WebConfig implements WebMvcConfigurer {
     
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Mapea /uploads/** a la carpeta local uploads/
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:uploads/");
     }

@@ -56,7 +56,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         return usuarioDAO.findAll();
     }
 
-    @Override//configurado para reemplazar sin condiciones en los datos que no son id
+    @Override
     public void update(Usuario usuario) {
         if (usuario.getId() == null) throw new IllegalArgumentException("El usuario debe tener un ID para poder actualizarse.");
 
@@ -78,7 +78,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         if (tieneReservasVigentes) throw new UsuarioNoPuedeSerEliminado("No se puede eliminar la cuenta porque tiene reservas en proceso.");
         if (peticionesVigentes) throw new UsuarioNoPuedeSerEliminado("No se puede eliminar la cuenta porque tiene peticiones de sus inmuebles, todavía en proceso.");
 
-        peticionDAO.deleteByClient(userId); // la cascada del papu >:V
+        peticionDAO.deleteByClient(userId);
         peticionDAO.deleteByOwner(userId);
         inmuebleDAO.deleteByOwner(userId);
         authInfoDAO.deleteByUserId(userId);
@@ -93,7 +93,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         String username = user.getName();
 
-        AuthInfo authInfo = authInfoDAO.save(new AuthInfo(user)); // guardo la key
+        AuthInfo authInfo = authInfoDAO.save(new AuthInfo(user));
 
         return (new CredentialsDTO(user.getId(),authInfo.getId(), username));
     }
@@ -110,7 +110,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     private void removePreviousKey(Usuario user) {
         Optional<AuthInfo> infoDeUsuario = authInfoDAO.getInfoDeUsuario(user.getId());
         infoDeUsuario.ifPresent(authInfoDAO::delete);
-        authInfoDAO.flush(); // ESTE FLUSH es importante, sino sigue en la misma transacción y quiere borrar LUEGO de haber puesto la nueva entrada. Lo cual rompe todo.
+        authInfoDAO.flush();
     }
 
 }

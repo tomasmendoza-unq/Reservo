@@ -27,7 +27,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendSimpleEmail(String to, String subject, String text) {
-        if (!KNOWN_EMAILS.contains(to)) return; // para que nos manden a nosotros nada más
+        if (!KNOWN_EMAILS.contains(to)) return;
 
         try {
             sendEmail(to, subject, text);

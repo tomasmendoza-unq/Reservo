@@ -1,5 +1,7 @@
 package com.reservo.service.impl;
 
+import com.reservo.modelo.property.ReservoImage;
+import com.reservo.service.ImageService;
 import com.reservo.service.ResetService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -18,9 +20,33 @@ public class ResetServiceImpl implements ResetService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private final ImageService imageService;
+
+    public ResetServiceImpl(ImageService imageService) {
+        this.imageService = imageService;
+    }
+
     @Override
     public void resetAll() {
+        deleteCloudinaryImages();
         resetSQL();
+    }
+
+    private void deleteCloudinaryImages() {
+        try {
+            String query = "SELECT ri FROM ReservoImage ri";
+            @SuppressWarnings("unchecked")
+            List<ReservoImage> images = entityManager.createQuery(query, ReservoImage.class).getResultList();
+
+            for (ReservoImage image : images) {
+                if (image.getPublicId() != null && !image.getPublicId().isEmpty()) {
+                    imageService.deleteImage(image.getPublicId());
+                }
+            }
+        } catch (Exception e) {
+            // Si hay error al eliminar de Cloudinary, continuar con el reset de BD
+            System.err.println("Error al eliminar imagenes de Cloudinary: " + e.getMessage());
+        }
     }
 
     private void resetSQL() {

@@ -32,7 +32,7 @@ public class Inmueble {
     private  Double price;
 
     @Column(nullable = false)
-    private  String ubication; // dirección o localidad || inferir con base en las coords
+    private  String ubication;
 
     @Column(nullable = false)
     private  Integer capacity;
@@ -88,7 +88,7 @@ public class Inmueble {
     public Inmueble(String name, String desc, Double price,
                     String ubi, Integer capacity, String condition,
                     LocalTime horaInicio, LocalTime horaFinal, Usuario owner,
-                    PoliticaDeCancelacion cancellation,String calle,Integer altura) { // , Usuario owner
+                    PoliticaDeCancelacion cancellation,String calle,Integer altura) {
         this.name = name;
         this.description = desc;
         this.price = price;
